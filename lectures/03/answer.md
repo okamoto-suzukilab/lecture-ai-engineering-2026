@@ -19,6 +19,20 @@ AIE2026の講座における「3レベル」とは、宿題の難易度や取り
 - 1つの質問での LLM 呼び出し回数（`requests`）：2
 - 追加したツールと、docstring に書いた説明：
 
+def make_quiz(lecture: int) -> str:
+    """指定した回の用語から1つ選び、確認問題と答えを返す。
+
+    「第2回の確認問題を出して」のように、講義内容の復習問題を
+    求められたときに使う。
+    """
+    terms = [entry for entry in load_glossary() if entry["lecture"] == lecture]
+    if not terms:
+        return f"第{lecture}回の用語は用語集にありません。"
+
+    entry = random.choice(terms)
+    return f"問題: 「{entry['term']}」の意味は？\n答え: {entry['definition']}"
+
+
 ## 宿題
 
 - 取り組んだレベル：基礎 / 実装 / 発展
