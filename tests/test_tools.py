@@ -1,6 +1,7 @@
 """ツールのテスト（LLMもAPIキーも使わない）。"""
 
 import json
+from pathlib import Path
 
 from app import tools
 
@@ -46,3 +47,15 @@ def test_default_question_of_lecture1_is_answerable_from_glossary():
     assert "3レベル" in DEFAULT_QUESTION
     hits = json.loads(tools.search_glossary("3レベル"))
     assert hits[0]["term"] == "宿題の3レベル"
+
+
+def test_save_learning_log_writes_content(tmp_path: Path, monkeypatch):
+    log_dir = tmp_path / "learning_log"
+    monkeypatch.setattr(tools, "LOG_DIR", log_dir)
+
+    result = tools.save_learning_log("今日の学び")
+
+    saved = list(log_dir.glob("*.md"))
+    assert len(saved) == 1
+    assert saved[0].read_text(encoding="utf-8") == "今日の学び"
+    assert str(saved[0]) in result
